@@ -1,12 +1,22 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 
 import Button from '../UI/Button';
+import ScrollView from '../UI/ScrollView';
+import ColorList from './ColorList';
+
+const errorMessage = 'Error!';
 
 const ColorMap = () => {
-  const [color, setColor] = useState('#');
+  const [color, setColor] = useState('#ffffff');
   const [error, setError] = useState('');
+  const [colorList, setColorList] = useState([]);
+
+  const isValidHex = (hexValue) => {
+    return /^#([0-9A-F]{3}){1,2}$/i.test(hexValue);
+  };
 
   const fetchColorHandler = useCallback(async () => {
+    setError('');
     try {
       const result = await fetch('https://www.colr.org/json/color/random', {
         method: 'GET',
@@ -18,26 +28,36 @@ const ColorMap = () => {
       });
 
       if (!result.ok) {
-        throw new Error('Error!');
+        throw new Error(errorMessage);
       }
 
       const data = await result.json();
+
       if (data.colors && Array.isArray(data.colors) && data.colors.length > 0) {
-        setColor(`#${data.colors[0].hex}`);
+        const newColor = `#${data.colors[0].hex}`;
+
+        if (!isValidHex(newColor)) {
+          setError(errorMessage);
+          return;
+        }
+
+        setColor(newColor);
+
+        if (!colorList.includes(newColor))
+          setColorList([...colorList, { id: Math.random(), color: newColor }]);
       } else {
-        setError('Error!');
+        setError(errorMessage);
       }
     } catch (error) {
       setError(error);
     }
-  }, []);
-
-  useEffect(() => {
-    fetchColorHandler();
-  }, [fetchColorHandler]);
+  }, [colorList]);
 
   return (
     <React.Fragment>
+      <ScrollView>
+        <ColorList colors={colorList} />
+      </ScrollView>
       <Button
         onClick={fetchColorHandler}
         color={color}

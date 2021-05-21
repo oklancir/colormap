@@ -1,0 +1,24 @@
+.colors {
+  margin: 2rem auto;
+  height: 24 rem;
+  max-height: 48rem;
+  width: 90%;
+  max-width: 16rem;
+}
+
+.colors ul {
+  list-style: none;
+  padding: 1rem;
+}
+
+.colors li {
+  border: 1px solid #ccc;
+  margin: 0.5rem 0;
+  padding: 1rem;
+  cursor: pointer;
+}
+
+.colors li:hover,
+.colors li:active {
+  background: #474d5a;
+}
