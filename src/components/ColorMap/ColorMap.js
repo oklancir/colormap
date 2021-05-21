@@ -55,10 +55,18 @@ const ColorMap = () => {
     }
   }, [colorList]);
 
+  const setCurrentColorHandler = (event) => {
+    setColor(event.target.innerText);
+  };
+
   return (
     <React.Fragment>
       <ScrollView>
-        <ColorList colors={colorList} />
+        <ColorList
+          colors={colorList}
+          currentColor={color}
+          onClick={setCurrentColorHandler}
+        />
       </ScrollView>
       <Button
         onClick={fetchColorHandler}

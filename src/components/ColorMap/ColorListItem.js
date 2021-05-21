@@ -1,8 +1,14 @@
 import React from 'react';
 
-const ColorListItem = ({ color, onClick }) => {
+const ColorListItem = ({ color, currentColor, onClick }) => {
   return (
-    <li style={{ color: color }} onClick={onClick}>
+    <li
+      style={{
+        color: color,
+        fontWeight: color === currentColor ? 'bold' : 'normal',
+      }}
+      onClick={onClick}
+    >
       {color}
     </li>
   );
