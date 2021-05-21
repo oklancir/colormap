@@ -5,15 +5,14 @@ import ScrollView from '../UI/ScrollView';
 import ColorList from './ColorList';
 
 const errorMessage = 'Error!';
+const isValidHex = (hexValue) => {
+  return /^#([0-9A-F]{3}){1,2}$/i.test(hexValue);
+};
 
 const ColorMap = () => {
   const [color, setColor] = useState('#ffffff');
   const [error, setError] = useState('');
   const [colorList, setColorList] = useState([]);
-
-  const isValidHex = (hexValue) => {
-    return /^#([0-9A-F]{3}){1,2}$/i.test(hexValue);
-  };
 
   const fetchColorHandler = useCallback(async () => {
     setError('');
@@ -33,23 +32,26 @@ const ColorMap = () => {
 
       const data = await result.json();
 
-      if (data.colors && Array.isArray(data.colors) && data.colors.length > 0) {
-        const newColor = `#${data.colors[0].hex}`;
+      if (
+        !data.colors ||
+        !Array.isArray(data.colors) ||
+        data.colors.length === 0
+      ) {
+        throw new Error(errorMessage);
+      }
 
-        if (!isValidHex(newColor)) {
-          setError(errorMessage);
-          return;
-        }
+      const newColor = `#${data.colors[0].hex}`;
+      if (!isValidHex(newColor)) {
+        throw new Error(errorMessage);
+      }
 
-        setColor(newColor);
+      setColor(newColor);
 
-        if (!colorList.includes(newColor))
-          setColorList([...colorList, { id: Math.random(), color: newColor }]);
-      } else {
-        setError(errorMessage);
+      if (!colorList.includes(newColor)) {
+        setColorList([...colorList, { id: Math.random(), color: newColor }]);
       }
     } catch (error) {
-      setError(error);
+      setError(error.message);
     }
   }, [colorList]);
 

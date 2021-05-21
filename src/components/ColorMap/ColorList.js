@@ -21,9 +21,9 @@ const ColorList = ({ colors }) => {
   return (
     <div className="colors">
       <ul>
-        {colors.map((color) => {
-          return <ColorListItem key={color.id} color={color.color} />;
-        })}
+        {colors.map((color) => (
+          <ColorListItem key={color.id} color={color.color} />
+        ))}
       </ul>
       <div ref={bottomRef} className="list-bottom"></div>
     </div>

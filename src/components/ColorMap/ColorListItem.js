@@ -1,9 +1,9 @@
 import React from 'react';
 
-const ColorListItem = (props) => {
+const ColorListItem = ({ color, onClick }) => {
   return (
-    <li style={{ color: props.color }} onClick={props.onClick}>
-      {props.color}
+    <li style={{ color: color }} onClick={onClick}>
+      {color}
     </li>
   );
 };
