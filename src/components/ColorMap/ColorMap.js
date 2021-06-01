@@ -1,4 +1,5 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
+import { useKeyPress } from 'react-use';
 
 import Button from '../UI/Button';
 import ScrollView from '../UI/ScrollView';
@@ -13,6 +14,8 @@ const ColorMap = () => {
   const [color, setColor] = useState('#ffffff');
   const [error, setError] = useState('');
   const [colorList, setColorList] = useState([]);
+  const [keyPressUp] = useKeyPress((event) => event.keyCode === 38);
+  const [keyPressDown] = useKeyPress((event) => event.keyCode === 40);
 
   const fetchColorHandler = useCallback(async () => {
     setError('');
@@ -48,15 +51,55 @@ const ColorMap = () => {
       setColor(newColor);
 
       if (!colorList.includes(newColor)) {
-        setColorList([...colorList, { id: Math.random(), color: newColor }]);
+        setColorList([...colorList, newColor]);
       }
     } catch (error) {
       setError(error.message);
     }
   }, [colorList]);
 
-  const setCurrentColorHandler = (event) => {
-    setColor(event.target.innerText);
+  useEffect(() => {
+    if (keyPressDown === true) {
+      moveColorItemDown();
+    } else if (keyPressUp) {
+      moveColorItemUp();
+    }
+  }, [keyPressUp, keyPressDown]);
+
+  const setCurrentColorHandler = (color) => {
+    setColor(color);
+  };
+
+  const moveColorItemUp = () => {
+    const currentColorIndex = colorList.indexOf(color);
+    if (currentColorIndex <= 0) {
+      return;
+    }
+    const tempColors = [
+      ...colorList.slice(0, currentColorIndex),
+      ...colorList.slice(currentColorIndex + 1),
+    ];
+    setColorList([
+      ...tempColors.slice(0, currentColorIndex - 1),
+      color,
+      ...tempColors.slice(currentColorIndex - 1),
+    ]);
+  };
+
+  const moveColorItemDown = () => {
+    const currentColorIndex = colorList.indexOf(color);
+    if (currentColorIndex < 0 || currentColorIndex === colorList.length - 1) {
+      return;
+    }
+    const tempColors = [
+      ...colorList.slice(0, currentColorIndex),
+      ...colorList.slice(currentColorIndex + 1),
+    ];
+    setColorList([
+      ...tempColors.slice(0, currentColorIndex + 1),
+      color,
+      ...tempColors.slice(currentColorIndex + 1),
+    ]);
   };
 
   return (
